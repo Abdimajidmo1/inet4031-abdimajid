@@ -40,6 +40,13 @@ resource "kubernetes_deployment_v1" "db" {
       }
 
       spec {
+        # Start as the postgres user so the image skips gosu, which hangs on kernel 7.0.
+        security_context {
+          run_as_non_root = true
+          run_as_user     = "999"
+          run_as_group    = "999"
+        }
+
         container {
           name  = "db"
           image = "postgres:16"
